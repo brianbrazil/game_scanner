@@ -78,10 +78,4 @@ class BggCookies {
       }
       _locked = false;
     }
-
-    // Print all cookies
-    for (var entry in this.cookies.entries) {
-      print('Cookie: ${entry.key} = ${entry.value}');
-    }
-  }
 }

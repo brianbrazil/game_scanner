@@ -18,19 +18,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: bggCookies.login(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return  Center(child: Spinner());
-        }
-        return Scaffold(
-          appBar: AppBar(
-              title: Text("Scan a Barcode")
-          ),
-          body: body(context),
-        );
-      },
+    return Scaffold(
+      appBar: AppBar(
+          title: Text("Scan a Barcode")
+      ),
+      body: body(context),
     );
   }
 

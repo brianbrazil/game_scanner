@@ -6,6 +6,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:http/http.dart' as http;
 import 'spinner.dart';
+import 'bgg_cookies.dart';
 
 
 class WebPage extends StatelessWidget {
@@ -97,7 +98,15 @@ class WebPage extends StatelessWidget {
           ),
         ],
       ),
-      body: body(context),
+      body: FutureBuilder(
+        future: BggCookies().login(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Spinner();
+          }
+          return body(context);
+        },
+      ),
     );
   }
 

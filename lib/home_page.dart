@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'web_page.dart';
 import 'spinner.dart';
@@ -193,13 +194,15 @@ class GameUPCModel with ChangeNotifier {
   List<dynamic> games = [];
   bool isLoading = true;
   bool verified = false;
+  final gameUpcApiKey = dotenv.env['GAME_UPC_API_KEY'];
+  final gameUpcEnv = dotenv.env['GAME_UPC_ENV'];
 
   Future<void> fetchData(String? barcode) async {
     try {
       isLoading = true;
       var response = await http.get(
-        Uri.parse('https://api.gameupc.com/test/upc/$barcode'),
-        headers: {"x-api-key": "test_test_test_test_test"},
+        Uri.parse('https://api.gameupc.com/$gameUpcEnv/upc/$barcode'),
+        headers: {"x-api-key": gameUpcApiKey!},
       );
       var json = jsonDecode(response.body);
       verified = json['bgg_info_status'] == 'verified';

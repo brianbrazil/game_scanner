@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -24,6 +25,7 @@ Future<void> _initUserId() async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _initUserId();
+  await dotenv.load(fileName: ".env");
   // Lock orientation to portrait on Android phones only (leave Android tablets free)
   if (Platform.isAndroid) {
     final view = WidgetsBinding.instance.platformDispatcher.views.first;

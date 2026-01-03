@@ -81,33 +81,36 @@ class HomePage extends StatelessWidget {
               },
             ),
           ),
-          Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.flashlight_on, size: 75),
-                  iconSize: 75,
-                  onPressed: () {
-                    scannerController.toggleTorch();
-                  },
-                ),
-                Spacer(),
-                IconButton(
-                  icon: Icon(Icons.settings, size: 75),
-                  iconSize: 75,
-                  onPressed: () {
-                    scannerController.stop();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Settings(),
-                      ),
-                    ).then((_) {
-                      scannerController.start();
-                    });
-                  },
-                ),
-              ]
-          ),
+          Padding(
+            padding: EdgeInsets.all(10),
+            child: Row(
+                children: [
+                  IconButton(
+                    icon: borderedIcon(Icons.flashlight_on, color: Colors.blueGrey),
+                    iconSize: 65,
+                    onPressed: () {
+                      scannerController.toggleTorch();
+                    },
+                  ),
+                  Spacer(),
+                  IconButton(
+                    icon: borderedIcon(Icons.settings, color: Colors.blueGrey),
+                    iconSize: 65,
+                    onPressed: () {
+                      scannerController.stop();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Settings(),
+                        ),
+                      ).then((_) {
+                        scannerController.start();
+                      });
+                    },
+                  ),
+                ]
+            ),
+          )
         ],
       ),
     );
@@ -179,6 +182,18 @@ class HomePage extends StatelessWidget {
       scannerController.start();
     });
   }
+}
+
+Icon borderedIcon(name, {Color color = Colors.black}) {
+  return Icon(
+    name,
+    shadows: [
+      Shadow(offset: Offset(-1.5, -1.5), color: color),
+      Shadow(offset: Offset(1.5, -1.5), color: color),
+      Shadow(offset: Offset(1.5, 1.5), color: color),
+      Shadow(offset: Offset(-1.5, 1.5), color: color),
+    ],
+  );
 }
 
 class GameUPCModel with ChangeNotifier {

@@ -44,7 +44,7 @@ class BggCookies {
   
   Future<void> login() async {
     if (loggedIn()) { return; }
-    if (_bggCredentials() == false) { return; }
+    if (await _bggCredentials() == null) { return; }
     if (_locked) { return;}
     _locked = true;
     final response = await http.post(

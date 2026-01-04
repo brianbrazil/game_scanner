@@ -3,35 +3,17 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'home_page.dart';
 import 'settings.dart';
 
-Future<void> _initUserId() async {
-  final prefs = await SharedPreferences.getInstance();
-  const key = Settings.prefsGameUpcUserId;
-
-  if (prefs.getString(key) == null) {
-    final uuid = const Uuid().v4();
-    await prefs.setString(key, uuid);
-    debugPrint('Generated new game_upc_user_id: $uuid');
-  } else {
-    debugPrint('Existing game_upc_user_id: ${prefs.getString(key)}');
-  }
-}
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await _initUserId();
   await dotenv.load(fileName: ".env");
-  await lockAndroidOrientationToPortrait();
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => GameUPCModel(),
-      child: const MyApp()),
-  );
+  await _initUserId();
+  await _lockAndroidOrientationToPortrait();
+  runApp(const MyApp());
 }
 
 Future<void> _initUserId() async {
@@ -47,7 +29,7 @@ Future<void> _initUserId() async {
   }
 }
 
-Future<void> lockAndroidOrientationToPortrait() async {
+Future<void> _lockAndroidOrientationToPortrait() async {
   if (Platform.isAndroid) {
     final view = WidgetsBinding.instance.platformDispatcher.views.first;
     final logicalSize = view.physicalSize / view.devicePixelRatio;

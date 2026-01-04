@@ -26,7 +26,28 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _initUserId();
   await dotenv.load(fileName: ".env");
-  // Lock orientation to portrait on Android phones only (leave Android tablets free)
+  await lockAndroidOrientationToPortrait();
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => GameUPCModel(),
+      child: const MyApp()),
+  );
+}
+
+Future<void> _initUserId() async {
+  final prefs = await SharedPreferences.getInstance();
+  const key = Settings.prefsGameUpcUserId;
+
+  if (prefs.getString(key) == null) {
+    final uuid = const Uuid().v4();
+    await prefs.setString(key, uuid);
+    debugPrint('Generated new game_upc_user_id: $uuid');
+  } else {
+    debugPrint('Existing game_upc_user_id: ${prefs.getString(key)}');
+  }
+}
+
+Future<void> lockAndroidOrientationToPortrait() async {
   if (Platform.isAndroid) {
     final view = WidgetsBinding.instance.platformDispatcher.views.first;
     final logicalSize = view.physicalSize / view.devicePixelRatio;
@@ -38,11 +59,6 @@ Future<void> main() async {
       ]);
     }
   }
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => GameUPCModel(),
-      child: const MyApp()),
-  );
 }
 
 class MyApp extends StatelessWidget {

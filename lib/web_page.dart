@@ -27,45 +27,12 @@ class WebPage extends StatelessWidget {
           if (!verified)
             TextButton(
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Confirm'),
-                      content: Text('Is this correct?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.red,
-                          ),
-                          child: Text('No'),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            var response = await http.post(
-                              Uri.parse(bgg_info['update_url']),
-                              headers: {"x-api-key": "test_test_test_test_test"},
-                                body: jsonEncode({
-                                  "user_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
-                                })
-                            );
-                            print(response.body);
-                            Navigator.of(context).pop();
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.green,
-                          ),
-                          child: Text('Yes'),
-                        ),
-                      ],
-                    );
-                  },
-                );
+                showConfirmVerificationDialog(context);
               },
-              child: Text('Is this correct?'),
+              child: Text(
+                  'Is this correct?',
+                  style: TextStyle(color: Colors.white)
+              ),
             ),
 
           IconButton(
@@ -107,6 +74,49 @@ class WebPage extends StatelessWidget {
           return body(context);
         },
       ),
+    );
+  }
+
+  void showConfirmVerificationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm'),
+          content: Text(
+              'Is this correct?'
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () async {
+                var response = await http.post(
+                  Uri.parse(bgg_info['update_url']),
+                  headers: {"x-api-key": "test_test_test_test_test"},
+                    body: jsonEncode({
+                      "user_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+                    })
+                );
+                print(response.body);
+                this.verified = true;
+                Navigator.of(context).pop();
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.green,
+              ),
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
     );
   }
 

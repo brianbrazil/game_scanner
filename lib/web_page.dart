@@ -22,42 +22,17 @@ class WebPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          if (!verified)
-            TextButton(
-              onPressed: () {
-                showConfirmVerificationDialog(context);
-              },
-              child: Text(
-                  'Is this correct?',
-                  style: TextStyle(color: Colors.white)
-              ),
-            ),
-
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              // TODO: Implement add action
-            },
-          ),
-
           PopupMenuButton<String>(
             icon: Icon(Icons.menu_rounded),
             onSelected: (String value) {
-              // Handle menu item selection
-              if (value == 'verify') {
-                // TODO: Implement verify action
-              } else if (value == 'add_to_collection') {
-                // TODO: Implement add to collection action
+              if (value == 'verify_barcode') {
+                showConfirmVerificationDialog(context);
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
-                value: 'verify',
-                child: Text('Verify'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'add_to_collection',
-                child: Text('+ Add to Collection'),
+                value: 'verify_barcode',
+                child: Text('Verify Barcode'),
               ),
             ],
           ),
@@ -82,7 +57,7 @@ class WebPage extends StatelessWidget {
         return AlertDialog(
           title: Text('Confirm'),
           content: Text(
-              'Is this correct?'
+              'Do you want to verify this barcode matches this game?'
           ),
           actions: [
             TextButton(

@@ -51,19 +51,6 @@ Future<void> _lockAndroidOrientationToPortrait() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  Future<void> _initUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    const key = 'user_id';
-
-    if (prefs.getString(key) == null) {
-      final uuid = const Uuid().v4();
-      await prefs.setString(key, uuid);
-      debugPrint('Generated new user_id: $uuid');
-    } else {
-      debugPrint('Existing user_id: ${prefs.getString(key)}');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

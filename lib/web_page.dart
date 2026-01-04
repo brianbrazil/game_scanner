@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
-import 'package:bgg_api/bgg_api.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -11,7 +9,7 @@ import 'bgg_cookies.dart';
 
 class WebPage extends StatelessWidget {
   final Map<String, dynamic> bgg_info;
-  bool verified;
+  final bool verified;
 
   WebPage({
     super.key,
@@ -106,7 +104,6 @@ class WebPage extends StatelessWidget {
                     })
                 );
                 print(response.body);
-                this.verified = true;
                 Navigator.of(context).pop();
               },
               style: TextButton.styleFrom(

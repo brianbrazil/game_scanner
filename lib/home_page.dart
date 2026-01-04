@@ -28,8 +28,10 @@ class HomePage extends StatelessWidget {
   }
 
   Widget body(BuildContext context) {
-    return Center(
-      child: Column(
+    return Padding(
+      padding: EdgeInsets.all(25),
+      child: Center(
+        child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
@@ -105,6 +107,7 @@ class HomePage extends StatelessWidget {
             ),
           )
         ],
+        ),
       ),
     );
   }

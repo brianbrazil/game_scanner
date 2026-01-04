@@ -11,7 +11,7 @@ import 'bgg_cookies.dart';
 
 class WebPage extends StatelessWidget {
   final Map<String, dynamic> bgg_info;
-  final bool verified;
+  bool verified;
 
   WebPage({
     super.key,

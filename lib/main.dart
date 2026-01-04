@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'home_page.dart';
@@ -13,7 +14,11 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await _initUserId();
   await _lockAndroidOrientationToPortrait();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => GameUPCModel(),
+      child: const MyApp()),
+  );
 }
 
 Future<void> _initUserId() async {

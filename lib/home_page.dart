@@ -113,49 +113,52 @@ class HomePage extends StatelessWidget {
     return AlertDialog(
         content: Consumer<GameUPCModel>(
             builder: (context, model, _) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ...model.games
-                      .asMap()
-                      .entries
-                      .map((entry) {
-                    final index = entry.key;
-                    final game = entry.value;
-                    final isFirstGame = index == 0;
-                    return SizedBox(
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ...model.games
+                        .asMap()
+                        .entries
+                        .map((entry) {
+                      final index = entry.key;
+                      final game = entry.value;
+                      final isFirstGame = index == 0;
+                      return SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            openWebPage(context, game, model.verified);
+                          },
+                          child: Center(
+                              child: Text(
+                                  '${game['name']} (${game['confidence']})',
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.visible,
+                                  style: TextStyle(
+                                    fontSize: isFirstGame ? 22 : 14,
+                                  )
+                              )
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                    SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          openWebPage(context, game, model.verified);
+                          scannerController.start();
                         },
-                        child: Center(
-                            child: Text('${game['name']} (${game['confidence']})',
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.visible,
-                              style: TextStyle(
-                                fontSize: isFirstGame ? 22 : 14,
-                              )
-                            )
+                        style: ElevatedButton.styleFrom(
+                          side: BorderSide(color: Colors.red, width: 2),
                         ),
+                        child: Text('Cancel'),
                       ),
-                    );
-                  }).toList(),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        scannerController.start();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        side: BorderSide(color: Colors.red, width: 2),
-                      ),
-                      child: Text('Cancel'),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
         }
       )

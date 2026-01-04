@@ -133,7 +133,7 @@ class HomePage extends StatelessWidget {
                           },
                           child: Center(
                               child: Text(
-                                  '${game['name']} (${game['confidence']})',
+                                  game['name'],
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.visible,
                                   style: TextStyle(

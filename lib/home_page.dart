@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -211,6 +212,12 @@ class GameUPCModel with ChangeNotifier {
         headers: {"x-api-key": gameUpcApiKey!},
       );
       var json = jsonDecode(response.body);
+
+// Pretty print JSON for debugging
+      const encoder = JsonEncoder.withIndent('  ');
+      final prettyJson = encoder.convert(json);
+      debugPrint('API Response:\n$prettyJson');
+
       verified = json['bgg_info_status'] == 'verified';
       games = json['bgg_info'] ?? [];
       games.sort((a, b) =>

@@ -1,11 +1,26 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'spinner.dart';
 import 'bgg_cookies.dart';
+import 'settings.dart';
 
+
+class VerifiedModel extends ChangeNotifier {
+  bool verified;
+
+  VerifiedModel(this.verified);
+
+  void setVerified(bool value) {
+    verified = value;
+    notifyListeners();
+  }
+}
 
 class WebPage extends StatelessWidget {
   final Map<String, dynamic> bgg_info;
@@ -19,41 +34,62 @@ class WebPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          PopupMenuButton<String>(
-            icon: Icon(Icons.menu_rounded),
-            onSelected: (String value) {
-              if (value == 'verify_barcode') {
-                showConfirmVerificationDialog(context);
-              }
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'verify_barcode',
-                child: Text('Verify Barcode'),
-              ),
-            ],
-          ),
-        ],
-      ),
-      body: FutureBuilder(
-        future: BggCookies().login(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Spinner();
-          }
-          return body(context);
-        },
+    bgg_info.forEach((key, value) {
+      print('$key -> $value');
+    });
+    return ChangeNotifierProvider(
+      create: (_) => VerifiedModel(verified),
+      child: Scaffold(
+        appBar: AppBar(
+          actions: [
+            Consumer<VerifiedModel>(
+              builder: (context, model, _) {
+                return PopupMenuButton<String>(
+                  icon: Icon(Icons.menu_rounded),
+                  onSelected: (String value) {
+                    if (value == 'verify_barcode') {
+                      showConfirmVerificationDialog(context);
+                    } else
+                    if (value == 'reset_barcode') {
+                      showResetVerificationDialog(context);
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    final verifyMenuItem = model.verified
+                        ? const PopupMenuItem<String>(
+                            value: 'reset_barcode',
+                            child: Text('Reset Barcode'),
+                          )
+                        : const PopupMenuItem<String>(
+                            value: 'verify_barcode',
+                            child: Text('Verify Barcode'),
+                          );
+                    return <PopupMenuEntry<String>>[verifyMenuItem];
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+        body: FutureBuilder(
+          future: BggCookies().login(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Spinner();
+            }
+            return body(context);
+          },
+        ),
       ),
     );
   }
 
-  void showConfirmVerificationDialog(BuildContext context) {
+  void showConfirmVerificationDialog(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final verifiedModel = context.read<VerifiedModel>();
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text('Confirm'),
           content: Text(
@@ -62,7 +98,7 @@ class WebPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.red,
@@ -72,14 +108,60 @@ class WebPage extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 var response = await http.post(
-                  Uri.parse(bgg_info['update_url']),
-                  headers: {"x-api-key": "test_test_test_test_test"},
+                    Uri.parse(bgg_info['update_url']),
+                    headers: {"x-api-key": dotenv.env['GAME_UPC_API_KEY']!},
                     body: jsonEncode({
-                      "user_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+                      "user_id": prefs.getString(Settings.prefsGameUpcUserId)!
                     })
                 );
                 print(response.body);
-                Navigator.of(context).pop();
+                verifiedModel.setVerified(true);
+                Navigator.of(dialogContext).pop();
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.green,
+              ),
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showResetVerificationDialog(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final verifiedModel = context.read<VerifiedModel>();
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Confirm'),
+          content: Text(
+              'Do you want to verify this barcode does not match this game?'
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () async {
+                var response = await http.delete(
+                    Uri.parse(bgg_info['update_url']),
+                    headers: {"x-api-key": dotenv.env['GAME_UPC_API_KEY']!},
+                    body: jsonEncode({
+                      "user_id": prefs.getString(Settings.prefsGameUpcUserId)!
+                    })
+                );
+                print(response.body);
+                verifiedModel.setVerified(false);
+                Navigator.of(dialogContext).pop();
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.green,

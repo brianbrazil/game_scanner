@@ -46,27 +46,36 @@ class WebPage extends StatelessWidget {
           actions: [
             Consumer<VerifiedModel>(
               builder: (context, model, _) {
-                return PopupMenuButton<String>(
-                  icon: Icon(Icons.menu_rounded),
-                  onSelected: (String value) {
-                    if (value == 'verify_barcode') {
-                      showConfirmVerificationDialog(context);
-                    } else
-                    if (value == 'reset_barcode') {
-                      showResetVerificationDialog(context);
+                return FutureBuilder<bool>(
+                  future: isVerifier(barcode),
+                  builder: (context, snapshot) {
+                    final isVerifierUser = snapshot.data ?? false;
+                    if (!model.verified || isVerifierUser) {
+                      return PopupMenuButton<String>(
+                        icon: Icon(Icons.menu_rounded),
+                        onSelected: (String value) {
+                          if (value == 'verify_barcode') {
+                            showConfirmVerificationDialog(context);
+                          } else
+                          if (value == 'reset_barcode') {
+                            showResetVerificationDialog(context);
+                          }
+                        },
+                        itemBuilder: (BuildContext context) {
+                          final verifyMenuItem = model.verified
+                              ? const PopupMenuItem<String>(
+                                  value: 'reset_barcode',
+                                  child: Text('Reset Barcode'),
+                                )
+                              : const PopupMenuItem<String>(
+                                  value: 'verify_barcode',
+                                  child: Text('Verify Barcode'),
+                                );
+                          return <PopupMenuEntry<String>>[verifyMenuItem];
+                        },
+                      );
                     }
-                  },
-                  itemBuilder: (BuildContext context) {
-                    final verifyMenuItem = model.verified
-                        ? const PopupMenuItem<String>(
-                            value: 'reset_barcode',
-                            child: Text('Reset Barcode'),
-                          )
-                        : const PopupMenuItem<String>(
-                            value: 'verify_barcode',
-                            child: Text('Verify Barcode'),
-                          );
-                    return <PopupMenuEntry<String>>[verifyMenuItem];
+                    return SizedBox.shrink();
                   },
                 );
               },

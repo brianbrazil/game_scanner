@@ -27,6 +27,8 @@ class WebPage extends StatelessWidget {
   final bool verified;
   final String barcode;
 
+  static final BggCookies bggCookies = BggCookies();
+
   WebPage({
     super.key,
     required this.bgg_info,
@@ -83,7 +85,7 @@ class WebPage extends StatelessWidget {
           ],
         ),
         body: FutureBuilder(
-          future: BggCookies().login(),
+          future: bggCookies.login(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Spinner();

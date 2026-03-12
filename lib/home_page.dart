@@ -10,10 +10,8 @@ import 'package:http/http.dart' as http;
 import 'web_page.dart';
 import 'spinner.dart';
 import 'settings.dart';
-import 'bgg_cookies.dart';
 
 class HomePage extends StatelessWidget {
-  final BggCookies bggCookies = BggCookies();
   final MobileScannerController scannerController = MobileScannerController(
     autoStart: true,
   );

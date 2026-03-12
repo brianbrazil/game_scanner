@@ -25,11 +25,13 @@ class VerifiedModel extends ChangeNotifier {
 class WebPage extends StatelessWidget {
   final Map<String, dynamic> bgg_info;
   final bool verified;
+  final String barcode;
 
   WebPage({
     super.key,
     required this.bgg_info,
-    required this.verified
+    required this.verified,
+    required this.barcode,
   });
 
   @override
@@ -215,4 +217,25 @@ class WebPage extends StatelessWidget {
       child: WebViewWidget(controller: controller),
     );
   }
+
+  Future<bool> isVerifier(barcode) async {
+    final gameUpcApiKey = dotenv.env['GAME_UPC_API_KEY'];
+    final gameUpcEnv = dotenv.env['GAME_UPC_ENV'];
+    final prefs = await SharedPreferences.getInstance();
+    final user_id = prefs.getString(Settings.prefsGameUpcUserId)!;
+
+    var response = await http.get(
+      Uri.parse('https://api.gameupc.com/$gameUpcEnv/upc/$barcode/user_id/$user_id'),
+      headers: {"x-api-key": gameUpcApiKey!},
+    );
+
+    debugPrint('*** Status: ${response.statusCode}');
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
 }

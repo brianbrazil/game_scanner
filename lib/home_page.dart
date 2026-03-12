@@ -57,7 +57,7 @@ class HomePage extends StatelessWidget {
 
                               if (model.games.length == 1) {
                                 openWebPage(context, model.games[0],
-                                    model.verified);
+                                    model.verified, model.barcode);
                               } else if (model.games.length > 1) {
                                 showDialog(
                                   context: context,
@@ -133,7 +133,7 @@ class HomePage extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
-                            openWebPage(context, game, model.verified);
+                            openWebPage(context, game, model.verified, model.barcode);
                           },
                           child: Center(
                               child: Text(
@@ -169,13 +169,14 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void openWebPage(BuildContext context, game, verified) {
+  void openWebPage(BuildContext context, game, verified, barcode) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => WebPage(
             bgg_info: game,
-            verified: verified
+            verified: verified,
+            barcode: barcode,
         ),
       ),
     ).then((_) {
@@ -201,11 +202,13 @@ class GameUPCModel with ChangeNotifier {
   List<dynamic> games = [];
   bool isLoading = true;
   bool verified = false;
+  String barcode = '';
   final gameUpcApiKey = dotenv.env['GAME_UPC_API_KEY'];
   final gameUpcEnv = dotenv.env['GAME_UPC_ENV'];
 
   Future<void> fetchData(String? barcode) async {
     try {
+      this.barcode = barcode!;
       isLoading = true;
       var response = await http.get(
         Uri.parse('https://api.gameupc.com/$gameUpcEnv/upc/$barcode'),
@@ -213,7 +216,6 @@ class GameUPCModel with ChangeNotifier {
       );
       var json = jsonDecode(response.body);
 
-// Pretty print JSON for debugging
       const encoder = JsonEncoder.withIndent('  ');
       final prettyJson = encoder.convert(json);
       debugPrint('API Response:\n$prettyJson');

@@ -65,11 +65,11 @@ class WebPage extends StatelessWidget {
                           final verifyMenuItem = model.verified
                               ? const PopupMenuItem<String>(
                                   value: 'reset_barcode',
-                                  child: Text('Reset Barcode'),
+                                  child: Text('Yes, this is the correct game'),
                                 )
                               : const PopupMenuItem<String>(
                                   value: 'verify_barcode',
-                                  child: Text('Verify Barcode'),
+                                  child: Text('No, this is not the correct game'),
                                 );
                           return <PopupMenuEntry<String>>[verifyMenuItem];
                         },

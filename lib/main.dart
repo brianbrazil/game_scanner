@@ -24,11 +24,11 @@ Future<void> main() async {
 
 Future<void> _initUserId() async {
   const storage = FlutterSecureStorage();
-  final gameUpcUserId = await storage.read(key: Settings.secureGameUpcUserId);
+  final gameUpcUserId = await storage.read(key: Settings.gameUpcUserIdKey);
 
   if (gameUpcUserId == null) {
     final uuid = const Uuid().v4();
-    await storage.write(key: Settings.secureGameUpcUserId, value: uuid);
+    await storage.write(key: Settings.gameUpcUserIdKey, value: uuid);
     debugPrint('Generated new game_upc_user_id: $uuid');
   } else {
     debugPrint('Existing game_upc_user_id: ${gameUpcUserId}');

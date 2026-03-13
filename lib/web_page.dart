@@ -124,7 +124,7 @@ class WebPage extends StatelessWidget {
                     Uri.parse(bgg_info['update_url']),
                     headers: {"x-api-key": dotenv.env['GAME_UPC_API_KEY']!},
                     body: jsonEncode({
-                      "user_id": await storage.read(key: Settings.secureGameUpcUserId)
+                      "user_id": await storage.read(key: Settings.gameUpcUserIdKey)
                     })
                 );
                 print(response.body);
@@ -168,7 +168,7 @@ class WebPage extends StatelessWidget {
                     Uri.parse(bgg_info['update_url']),
                     headers: {"x-api-key": dotenv.env['GAME_UPC_API_KEY']!},
                     body: jsonEncode({
-                      "user_id": await storage.read(key: Settings.secureGameUpcUserId)
+                      "user_id": await storage.read(key: Settings.gameUpcUserIdKey)
                     })
                 );
                 print(response.body);
@@ -231,7 +231,7 @@ class WebPage extends StatelessWidget {
   Future<bool> isVerifier(barcode) async {
     final gameUpcApiKey = dotenv.env['GAME_UPC_API_KEY'];
     final gameUpcEnv = dotenv.env['GAME_UPC_ENV'];
-    final user_id = await storage.read(key: Settings.secureGameUpcUserId);
+    final user_id = await storage.read(key: Settings.gameUpcUserIdKey);
 
     var response = await http.get(
       Uri.parse('https://api.gameupc.com/$gameUpcEnv/upc/$barcode/user_id/$user_id'),

@@ -14,12 +14,12 @@ class BggCookies {
   
   Future<String?> _getBggUsername() async {
     const storage = FlutterSecureStorage();
-    return await storage.read(key: Settings.secureUsernameKey);
+    return await storage.read(key: Settings.bggUsernameKey);
   }
 
   Future<String?> _getBggPassword() async {
     const storage = FlutterSecureStorage();
-    return await storage.read(key: Settings.securePasswordKey);
+    return await storage.read(key: Settings.bggPasswordKey);
   }
 
   Future<String?> _bggCredentials() async {

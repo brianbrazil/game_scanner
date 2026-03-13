@@ -5,16 +5,16 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class Settings extends StatelessWidget {
   const Settings({super.key});
 
-  static const secureUsernameKey = 'bgg_username';
-  static const securePasswordKey = 'bgg_password';
-  static const secureGameUpcUserId = 'game_upc_user_id';
+  static const bggUsernameKey = 'bgg_username';
+  static const bggPasswordKey = 'bgg_password';
+  static const gameUpcUserIdKey = 'game_upc_user_id';
 
   static const storage = FlutterSecureStorage();
 
   Future<Map<String, String?>> _loadValues() async {
-    final username = await storage.read(key: secureUsernameKey);
-    final password = await storage.read(key: securePasswordKey);
-    final gameUpcUserId = await storage.read(key: secureGameUpcUserId);
+    final username = await storage.read(key: bggUsernameKey);
+    final password = await storage.read(key: bggPasswordKey);
+    final gameUpcUserId = await storage.read(key: gameUpcUserIdKey);
     return {
       'username': username,
       'password': password,
@@ -23,11 +23,11 @@ class Settings extends StatelessWidget {
   }
 
   Future<void> _saveUsername(String value) async {
-    await storage.write(key: secureUsernameKey, value: value);
+    await storage.write(key: bggUsernameKey, value: value);
   }
 
   Future<void> _savePassword(String value) async {
-    await storage.write(key: securePasswordKey, value: value);
+    await storage.write(key: bggPasswordKey, value: value);
   }
 
   @override

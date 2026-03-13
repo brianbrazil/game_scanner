@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
                               Navigator.pop(dialogContext);
 
                               if (model.games.length == 1) {
-                                openWebPage(context, model.games[0],
+                                openBggPage(context, model.games[0],
                                     model.verified, model.barcode);
                               } else if (model.games.length > 1) {
                                 showDialog(
@@ -131,7 +131,7 @@ class HomePage extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
-                            openWebPage(context, game, model.verified, model.barcode);
+                            openBggPage(context, game, model.verified, model.barcode);
                           },
                           child: Center(
                               child: Text(
@@ -167,11 +167,11 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void openWebPage(BuildContext context, game, verified, barcode) {
+  void openBggPage(BuildContext context, game, verified, barcode) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WebPage(
+        builder: (context) => BggPage(
             bgg_info: game,
             verified: verified,
             barcode: barcode,

@@ -22,7 +22,7 @@ class VerifiedModel extends ChangeNotifier {
   }
 }
 
-class WebPage extends StatelessWidget {
+class BggPage extends StatelessWidget {
   final Map<String, dynamic> bgg_info;
   final bool verified;
   final String barcode;
@@ -30,7 +30,7 @@ class WebPage extends StatelessWidget {
   static final BggCookies bggCookies = BggCookies();
   final storage = FlutterSecureStorage();
 
-  WebPage({
+  BggPage({
     super.key,
     required this.bgg_info,
     required this.verified,

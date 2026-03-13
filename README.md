@@ -1,16 +1,18 @@
-# game_scanner
+# Game Scanner
 
-A new Flutter project.
+...coming soon to the Apple App Store!
 
-## Getting Started
+GameScanner is an open-source flutter app that allows users to scan the barcode on any board game and access the BGG page for that game.
 
-This project is a starting point for a Flutter application.
+Its two primary goals are:
+* Quickly scan a barcode at a game store to look up all that good, good, BGG data, such as ranking, best player count, etc.
+* Quickly add/remove board games from your BGG collection
 
-A few resources to get you started if this is your first Flutter project:
+## Contribution
+Contributions are welcome! Open a pull request today!
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+I live in the Apple ecosystem and would welcome any help getting the app running on android (or any other flutter-supported platforms?)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Shout outs
+* [GameUPC](https://gameupc.com/)
+* [BoardGameGeek](https://boardgamegeek.com/)

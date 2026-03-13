@@ -13,8 +13,8 @@ class BggCookies {
   BggCookies();
   
   Future<String?> _getBggUsername() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(Settings.prefsUsernameKey);
+    const storage = FlutterSecureStorage();
+    return await storage.read(key: Settings.secureUsernameKey);
   }
 
   Future<String?> _getBggPassword() async {

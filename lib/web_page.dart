@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'spinner.dart';
 import 'bgg_cookies.dart';
 import 'settings.dart';
@@ -28,6 +28,7 @@ class WebPage extends StatelessWidget {
   final String barcode;
 
   static final BggCookies bggCookies = BggCookies();
+  final storage = FlutterSecureStorage();
 
   WebPage({
     super.key,
@@ -98,7 +99,6 @@ class WebPage extends StatelessWidget {
   }
 
   void showConfirmVerificationDialog(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
     final verifiedModel = context.read<VerifiedModel>();
     showDialog(
       context: context,
@@ -124,7 +124,7 @@ class WebPage extends StatelessWidget {
                     Uri.parse(bgg_info['update_url']),
                     headers: {"x-api-key": dotenv.env['GAME_UPC_API_KEY']!},
                     body: jsonEncode({
-                      "user_id": prefs.getString(Settings.prefsGameUpcUserId)!
+                      "user_id": await storage.read(key: Settings.secureGameUpcUserId)
                     })
                 );
                 print(response.body);
@@ -143,7 +143,6 @@ class WebPage extends StatelessWidget {
   }
 
   void showResetVerificationDialog(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
     final verifiedModel = context.read<VerifiedModel>();
     showDialog(
       context: context,
@@ -169,7 +168,7 @@ class WebPage extends StatelessWidget {
                     Uri.parse(bgg_info['update_url']),
                     headers: {"x-api-key": dotenv.env['GAME_UPC_API_KEY']!},
                     body: jsonEncode({
-                      "user_id": prefs.getString(Settings.prefsGameUpcUserId)!
+                      "user_id": await storage.read(key: Settings.secureGameUpcUserId)
                     })
                 );
                 print(response.body);
@@ -232,8 +231,7 @@ class WebPage extends StatelessWidget {
   Future<bool> isVerifier(barcode) async {
     final gameUpcApiKey = dotenv.env['GAME_UPC_API_KEY'];
     final gameUpcEnv = dotenv.env['GAME_UPC_ENV'];
-    final prefs = await SharedPreferences.getInstance();
-    final user_id = prefs.getString(Settings.prefsGameUpcUserId)!;
+    final user_id = await storage.read(key: Settings.secureGameUpcUserId);
 
     var response = await http.get(
       Uri.parse('https://api.gameupc.com/$gameUpcEnv/upc/$barcode/user_id/$user_id'),

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -22,15 +23,15 @@ Future<void> main() async {
 }
 
 Future<void> _initUserId() async {
-  final prefs = await SharedPreferences.getInstance();
-  const key = Settings.prefsGameUpcUserId;
+  const storage = FlutterSecureStorage();
+  final gameUpcUserId = await storage.read(key: Settings.secureGameUpcUserId);
 
-  if (prefs.getString(key) == null) {
+  if (gameUpcUserId == null) {
     final uuid = const Uuid().v4();
-    await prefs.setString(key, uuid);
+    await storage.write(key: Settings.secureGameUpcUserId, value: uuid);
     debugPrint('Generated new game_upc_user_id: $uuid');
   } else {
-    debugPrint('Existing game_upc_user_id: ${prefs.getString(key)}');
+    debugPrint('Existing game_upc_user_id: ${gameUpcUserId}');
   }
 }
 

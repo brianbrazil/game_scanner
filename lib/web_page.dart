@@ -238,8 +238,6 @@ class WebPage extends StatelessWidget {
       headers: {"x-api-key": gameUpcApiKey!},
     );
 
-    debugPrint('*** Status: ${response.statusCode}');
-
     if (response.statusCode == 200) {
       return true;
     }

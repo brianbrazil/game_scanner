@@ -27,12 +27,12 @@ jobs:
             echo "Tag '$TAG' does not match vINTEGER.INTEGER.INTEGER (e.g., v1.2.3). Skipping release."
             echo "valid=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Create GitHub Release
+      - name: Create GitHub Release (gh)
         if: ${{ steps.verify_tag.outputs.valid == 'true' }}
-        uses: softprops/action-gh-release@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          generate_release_notes: true
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --repo "${{ github.repository }}" \
+            --title "${{ github.ref_name }}" \
+            --generate-notes

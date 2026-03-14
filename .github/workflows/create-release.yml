@@ -1,38 +1,36 @@
-name: Create GitHub Release
+name: Create GitHub Release on tag push
 
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v*'
 
 permissions:
   contents: write
 
 jobs:
-  create-release:
+  release:
+    name: Create Release
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Validate tag format
+      - name: Verify tag format vINTEGER.INTEGER.INTEGER
+        id: verify_tag
         shell: bash
-        run: |
-          TAG="${GITHUB_REF_NAME}"
-          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Tag '$TAG' is not in the form v<major>.<minor>.<patch>"
-            exit 1
-          fi
-
-      - name: Create GitHub release
         env:
-          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
         run: |
-          TAG="${GITHUB_REF_NAME}"
-          gh release create "$TAG" \
-            --repo="${GITHUB_REPOSITORY}" \
-            --title "$TAG" \
-            --generate-notes
+          if [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "valid=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Tag '$TAG' does not match vINTEGER.INTEGER.INTEGER (e.g., v1.2.3). Skipping release."
+            echo "valid=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create GitHub Release
+        if: ${{ steps.verify_tag.outputs.valid == 'true' }}
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true

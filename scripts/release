@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <patch|minor|major>"
+  exit 1
+fi
+
+BUMP_TYPE=$1
+
+if [[ ! "$BUMP_TYPE" =~ ^(patch|minor|major)$ ]]; then
+  echo "Error: Argument must be 'patch', 'minor', or 'major'"
+  exit 1
+fi
+
+# Ensure pubspec.yaml is clean before proceeding
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
+if [ -z "$REPO_ROOT" ]; then
+  echo "Error: Not inside a git repository" >&2
+  exit 1
+fi
+
+# Load environment variables from .env if present (export all)
+if [ -f "$REPO_ROOT/.env" ]; then
+  # Export variables defined in .env so child processes can use them
+  set -a
+  # shellcheck disable=SC1090
+  source "$REPO_ROOT/.env"
+  set +a
+fi
+
+if git -C "$REPO_ROOT" diff --name-only | grep -qx "pubspec.yaml"; then
+  echo "pubspec.yaml is dirty" >&2
+  exit 1
+fi
+
+NEW_VERSION="v$(cider bump $BUMP_TYPE)"
+git commit $REPO_ROOT/pubspec.yaml -m "Release $NEW_VERSION"
+git tag "$NEW_VERSION"
+git push && git push --tags
+flutter build ipa --release --export-method app-store
+xcrun altool --upload-app --type ios --file $REPO_ROOT/build/ios/ipa/game_scanner.ipa --username $APP_STORE_USERNAME --password $APP_STORE_PASSWORD

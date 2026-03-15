@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import 'web_page.dart';
+import 'bgg_page.dart';
 import 'spinner.dart';
 import 'settings.dart';
 

@@ -121,10 +121,7 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    ...model.games
-                        .asMap()
-                        .entries
-                        .map((entry) {
+                    ...model.games.asMap().entries.map((entry) {
                       final index = entry.key;
                       final game = entry.value;
                       final isFirstGame = index == 0;

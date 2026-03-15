@@ -62,7 +62,9 @@ class HomePage extends StatelessWidget {
                                   builder: (context) =>
                                       title_selection_dialog(
                                           scannerController),
-                                );
+                                ).then((_) {
+                                  scannerController.start();
+                                });
                               }
                             });
                             return Spinner();
@@ -151,7 +153,6 @@ class HomePage extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          scannerController.start();
                         },
                         style: ElevatedButton.styleFrom(
                           side: BorderSide(color: Colors.red, width: 2),

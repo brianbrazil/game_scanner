@@ -54,8 +54,15 @@ class HomePage extends StatelessWidget {
                               Navigator.pop(dialogContext);
 
                               if (model.games.length == 1) {
-                                openBggPage(context, model.games[0],
-                                    model.verified, model.barcode);
+                                BggPage(
+                                  bgg_info: model.games[0],
+                                  verified: model.verified,
+                                  barcode: model.barcode,
+                                ).open(
+                                  context
+                                ).then((_) {
+                                  scannerController.start();
+                                });
                               } else {
                                 showDialog(
                                   context: context,
@@ -129,7 +136,15 @@ class HomePage extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
-                            openBggPage(context, game, model.verified, model.barcode);
+                            BggPage(
+                              bgg_info: game,
+                              verified: model.verified,
+                              barcode: model.barcode,
+                            ).open(
+                              context
+                            ).then((_) {
+                              scannerController.start();
+                            });
                           },
                           child: Center(
                               child: Text(
@@ -164,20 +179,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void openBggPage(BuildContext context, game, verified, barcode) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BggPage(
-            bgg_info: game,
-            verified: verified,
-            barcode: barcode,
-        ),
-      ),
-    ).then((_) {
-      scannerController.start();
-    });
-  }
 }
 
 Icon borderedIcon(name, {Color color = Colors.black}) {

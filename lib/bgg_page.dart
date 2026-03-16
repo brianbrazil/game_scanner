@@ -37,6 +37,20 @@ class BggPage extends StatelessWidget {
     required this.barcode,
   });
 
+  Future<void> open(
+    BuildContext context, {
+    VoidCallback? onReturn,
+  }) {
+    return Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => this,
+      ),
+    ).then((_) {
+      onReturn?.call();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     bgg_info.forEach((key, value) {

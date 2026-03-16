@@ -56,12 +56,11 @@ class HomePage extends StatelessWidget {
                               if (model.games.length == 1) {
                                 openBggPage(context, model.games[0],
                                     model.verified, model.barcode);
-                              } else if (model.games.length > 1) {
+                              } else {
                                 showDialog(
                                   context: context,
                                   builder: (context) =>
-                                      title_selection_dialog(
-                                          scannerController),
+                                      title_selection_dialog(),
                                 ).then((_) {
                                   scannerController.start();
                                 });
@@ -113,7 +112,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  AlertDialog title_selection_dialog(MobileScannerController scannerController) {
+  AlertDialog title_selection_dialog() {
     return AlertDialog(
         content: Consumer<GameUPCModel>(
             builder: (context, model, _) {

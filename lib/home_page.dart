@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'bgg_page.dart';
 import 'spinner.dart';
 import 'settings.dart';
+import 'title_selection_dialog.dart';
 
 class HomePage extends StatelessWidget {
   final MobileScannerController scannerController = MobileScannerController(
@@ -66,8 +67,11 @@ class HomePage extends StatelessWidget {
                                 } else {
                                   showDialog(
                                     context: context,
-                                    builder: (context) =>
-                                        title_selection_dialog(),
+                                    builder: (context) => TitleSelectionDialog(
+                                      games: model.games,
+                                      verified: model.verified,
+                                      barcode: model.barcode,
+                                    ),
                                   ).then((_) {
                                     scannerController.start();
                                   });
@@ -114,60 +118,6 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  AlertDialog title_selection_dialog() {
-    return AlertDialog(
-      content: Consumer<GameUPCModel>(
-        builder: (context, model, _) {
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ...model.games.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final game = entry.value;
-                  final isFirstGame = index == 0;
-                  return SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        BggPage(
-                          bgg_info: game,
-                          verified: model.verified,
-                          barcode: model.barcode,
-                        ).open(context);
-                      },
-                      child: Center(
-                        child: Text(
-                          game['name'],
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.visible,
-                          style: TextStyle(fontSize: isFirstGame ? 22 : 14),
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      side: BorderSide(color: Colors.red, width: 2),
-                    ),
-                    child: Text('Cancel'),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
       ),
     );
   }

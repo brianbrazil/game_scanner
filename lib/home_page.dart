@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:focus_on_it/focus_on_it.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -18,11 +19,14 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          title: Text("Scan a Barcode")
+    return FocusOnIt(
+      onFocus: () {
+        scannerController.start();
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text("Scan a Barcode")),
+        body: body(context),
       ),
-      body: body(context),
     );
   }
 
@@ -31,64 +35,63 @@ class HomePage extends StatelessWidget {
       padding: EdgeInsets.all(25),
       child: Center(
         child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: MobileScanner(
-              controller: scannerController,
-              onDetect: (result) {
-                scannerController.stop();
-                if (result.barcodes.isNotEmpty) {
-                  final rawValue = result.barcodes.first.rawValue;
-                  context.read<GameUPCModel>().fetchData(rawValue);
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (dialogContext) {
-                      return Consumer<GameUPCModel>(
-                        builder: (context, model, _) {
-                          if (model.isLoading) {
-                            return Spinner();
-                          } else {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              Navigator.pop(dialogContext);
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: MobileScanner(
+                controller: scannerController,
+                onDetect: (result) {
+                  scannerController.stop();
+                  if (result.barcodes.isNotEmpty) {
+                    final rawValue = result.barcodes.first.rawValue;
+                    context.read<GameUPCModel>().fetchData(rawValue);
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (dialogContext) {
+                        return Consumer<GameUPCModel>(
+                          builder: (context, model, _) {
+                            if (model.isLoading) {
+                              return Spinner();
+                            } else {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                Navigator.pop(dialogContext);
 
-                              if (model.games.length == 1) {
-                                BggPage(
-                                  bgg_info: model.games[0],
-                                  verified: model.verified,
-                                  barcode: model.barcode,
-                                ).open(
-                                  context
-                                ).then((_) {
-                                  scannerController.start();
-                                });
-                              } else {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      title_selection_dialog(),
-                                ).then((_) {
-                                  scannerController.start();
-                                });
-                              }
-                            });
-                            return Spinner();
-                          }
-                        },
-                      );
-                    },
-                  );
-                }
-              },
+                                if (model.games.length == 1) {
+                                  BggPage(
+                                    bgg_info: model.games[0],
+                                    verified: model.verified,
+                                    barcode: model.barcode,
+                                  ).open(context);
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        title_selection_dialog(),
+                                  ).then((_) {
+                                    scannerController.start();
+                                  });
+                                }
+                              });
+                              return Spinner();
+                            }
+                          },
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Row(
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Row(
                 children: [
                   IconButton(
-                    icon: borderedIcon(Icons.flashlight_on, color: Colors.blueGrey),
+                    icon: borderedIcon(
+                      Icons.flashlight_on,
+                      color: Colors.blueGrey,
+                    ),
                     iconSize: 65,
                     onPressed: () {
                       scannerController.toggleTorch();
@@ -102,18 +105,14 @@ class HomePage extends StatelessWidget {
                       scannerController.stop();
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => Settings(),
-                        ),
-                      ).then((_) {
-                        scannerController.start();
-                      });
+                        MaterialPageRoute(builder: (context) => Settings()),
+                      );
                     },
                   ),
-                ]
+                ],
+              ),
             ),
-          )
-        ],
+          ],
         ),
       ),
     );
@@ -121,64 +120,57 @@ class HomePage extends StatelessWidget {
 
   AlertDialog title_selection_dialog() {
     return AlertDialog(
-        content: Consumer<GameUPCModel>(
-            builder: (context, model, _) {
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ...model.games.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final game = entry.value;
-                      final isFirstGame = index == 0;
-                      return SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            BggPage(
-                              bgg_info: game,
-                              verified: model.verified,
-                              barcode: model.barcode,
-                            ).open(
-                              context
-                            ).then((_) {
-                              scannerController.start();
-                            });
-                          },
-                          child: Center(
-                              child: Text(
-                                  game['name'],
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.visible,
-                                  style: TextStyle(
-                                    fontSize: isFirstGame ? 22 : 14,
-                                  )
-                              )
-                          ),
+      content: Consumer<GameUPCModel>(
+        builder: (context, model, _) {
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ...model.games.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final game = entry.value;
+                  final isFirstGame = index == 0;
+                  return SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        BggPage(
+                          bgg_info: game,
+                          verified: model.verified,
+                          barcode: model.barcode,
+                        ).open(context);
+                      },
+                      child: Center(
+                        child: Text(
+                          game['name'],
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.visible,
+                          style: TextStyle(fontSize: isFirstGame ? 22 : 14),
                         ),
-                      );
-                    }).toList(),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          side: BorderSide(color: Colors.red, width: 2),
-                        ),
-                        child: Text('Cancel'),
                       ),
                     ),
-                  ],
+                  );
+                }).toList(),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      side: BorderSide(color: Colors.red, width: 2),
+                    ),
+                    child: Text('Cancel'),
+                  ),
                 ),
-              );
-        }
-      )
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
-
 }
 
 Icon borderedIcon(name, {Color color = Colors.black}) {
@@ -218,8 +210,9 @@ class GameUPCModel with ChangeNotifier {
 
       verified = json['bgg_info_status'] == 'verified';
       games = json['bgg_info'] ?? [];
-      games.sort((a, b) =>
-          (b['confidence'] ?? 0).compareTo(a['confidence'] ?? 0));
+      games.sort(
+        (a, b) => (b['confidence'] ?? 0).compareTo(a['confidence'] ?? 0),
+      );
       text = games.length.toString();
     } catch (e) {
       text = 'Error: $e';

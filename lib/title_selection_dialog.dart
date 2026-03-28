@@ -32,7 +32,7 @@ class TitleSelectionDialog extends StatelessWidget {
                   },
                   child: Center(
                     child: Text(
-                      game.name,
+                      '${game.name} (${game.published})',
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.visible,
                       style: TextStyle(fontSize: isFirstGame ? 22 : 14),

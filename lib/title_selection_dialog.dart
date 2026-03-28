@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'bgg_page.dart';
+import 'game_info.dart';
 
 class TitleSelectionDialog extends StatelessWidget {
   const TitleSelectionDialog({
     super.key,
     required this.games,
-    required this.verified,
-    required this.barcode,
   });
 
-  final List<dynamic> games;
-  final bool verified;
-  final String barcode;
+  final List<GameInfo> games;
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +27,12 @@ class TitleSelectionDialog extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                     BggPage(
-                      bgg_info: game,
-                      verified: verified,
-                      barcode: barcode,
+                      gameInfo: game,
                     ).open(context);
                   },
                   child: Center(
                     child: Text(
-                      game['name'],
+                      game.name,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.visible,
                       style: TextStyle(fontSize: isFirstGame ? 22 : 14),

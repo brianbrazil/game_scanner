@@ -9,6 +9,7 @@ import 'bgg_page.dart';
 import 'spinner.dart';
 import 'settings.dart';
 import 'title_selection_dialog.dart';
+import 'game_info.dart';
 
 class HomePage extends StatelessWidget {
   final MobileScannerController scannerController = MobileScannerController(
@@ -59,17 +60,13 @@ class HomePage extends StatelessWidget {
 
                                 if (model.games.length == 1) {
                                   BggPage(
-                                    bgg_info: model.games[0],
-                                    verified: model.verified,
-                                    barcode: model.barcode,
+                                      gameInfo: model.games[0],
                                   ).open(context);
                                 } else {
                                   showDialog(
                                     context: context,
                                     builder: (context) => TitleSelectionDialog(
                                       games: model.games,
-                                      verified: model.verified,
-                                      barcode: model.barcode,
                                     ),
                                   ).then((_) {
                                     scannerController.start();
@@ -136,7 +133,7 @@ Icon borderedIcon(name, {Color color = Colors.black}) {
 
 class GameUPCModel with ChangeNotifier {
   String text = '';
-  List<dynamic> games = [];
+  List<GameInfo> games = [];
   bool isLoading = true;
   bool verified = false;
   String barcode = '';
@@ -157,10 +154,9 @@ class GameUPCModel with ChangeNotifier {
       final prettyJson = encoder.convert(json);
       debugPrint('API Response:\n$prettyJson');
 
-      verified = json['bgg_info_status'] == 'verified';
-      games = json['bgg_info'] ?? [];
+      games = GameInfo.fromGameUpc(json);
       games.sort(
-        (a, b) => (b['confidence'] ?? 0).compareTo(a['confidence'] ?? 0),
+            (a, b) => (b.confidence).compareTo(a.confidence),
       );
       text = games.length.toString();
     } catch (e) {

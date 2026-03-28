@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'spinner.dart';
 import 'bgg_cookies.dart';
 import 'settings.dart';
+import 'game_info.dart';
 
 
 class VerifiedModel extends ChangeNotifier {
@@ -23,18 +24,14 @@ class VerifiedModel extends ChangeNotifier {
 }
 
 class BggPage extends StatelessWidget {
-  final Map<String, dynamic> bgg_info;
-  final bool verified;
-  final String barcode;
+  final GameInfo gameInfo;
 
   static final BggCookies bggCookies = BggCookies();
   final storage = FlutterSecureStorage();
 
   BggPage({
     super.key,
-    required this.bgg_info,
-    required this.verified,
-    required this.barcode,
+    required this.gameInfo,
   });
 
   Future<void> open(
@@ -53,18 +50,15 @@ class BggPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bgg_info.forEach((key, value) {
-      print('$key -> $value');
-    });
     return ChangeNotifierProvider(
-      create: (_) => VerifiedModel(verified),
+      create: (_) => VerifiedModel(gameInfo.verified),
       child: Scaffold(
         appBar: AppBar(
           actions: [
             Consumer<VerifiedModel>(
               builder: (context, model, _) {
                 return FutureBuilder<bool>(
-                  future: isVerifier(barcode),
+                  future: isVerifier(gameInfo.barcode),
                   builder: (context, snapshot) {
                     final isVerifierUser = snapshot.data ?? false;
                     if (!model.verified || isVerifierUser) {
@@ -135,7 +129,7 @@ class BggPage extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 var response = await http.post(
-                    Uri.parse(bgg_info['update_url']),
+                    Uri.parse(gameInfo.upc_update_url),
                     headers: {"x-api-key": dotenv.env['GAME_UPC_API_KEY']!},
                     body: jsonEncode({
                       "user_id": await storage.read(key: Settings.gameUpcUserIdKey)
@@ -179,7 +173,7 @@ class BggPage extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 var response = await http.delete(
-                    Uri.parse(bgg_info['update_url']),
+                    Uri.parse(gameInfo.upc_update_url),
                     headers: {"x-api-key": dotenv.env['GAME_UPC_API_KEY']!},
                     body: jsonEncode({
                       "user_id": await storage.read(key: Settings.gameUpcUserIdKey)
@@ -235,7 +229,7 @@ class BggPage extends StatelessWidget {
           },
         ),
       )
-      ..loadRequest(Uri.parse(bgg_info['page_url']));
+      ..loadRequest(Uri.parse(gameInfo.bgg_url));
 
     return Center(
       child: WebViewWidget(controller: controller),

@@ -201,7 +201,7 @@ class BggPage extends StatelessWidget {
   }
 
   Widget body(BuildContext context) {
-    var params;
+    PlatformWebViewControllerCreationParams params;
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
       params = WebKitWebViewControllerCreationParams(
         allowsInlineMediaPlayback: true,
@@ -245,10 +245,10 @@ class BggPage extends StatelessWidget {
   Future<bool> isVerifier(barcode) async {
     final gameUpcApiKey = dotenv.env['GAME_UPC_API_KEY'];
     final gameUpcEnv = dotenv.env['GAME_UPC_ENV'];
-    final user_id = await storage.read(key: Settings.gameUpcUserIdKey);
+    final userId = await storage.read(key: Settings.gameUpcUserIdKey);
 
     var response = await http.get(
-      Uri.parse('https://api.gameupc.com/$gameUpcEnv/upc/$barcode/user_id/$user_id'),
+      Uri.parse('https://api.gameupc.com/$gameUpcEnv/upc/$barcode/user_id/$userId'),
       headers: {"x-api-key": gameUpcApiKey!},
     );
 

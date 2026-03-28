@@ -46,6 +46,7 @@ dependencies:
   bgg_api: ^0.8.0
   flutter_dotenv: ^6.0.0
 
+  webview_flutter_wkwebview: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

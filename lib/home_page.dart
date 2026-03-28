@@ -1,8 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:focus_on_it/focus_on_it.dart';
 import 'package:provider/provider.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -17,6 +14,8 @@ class HomePage extends StatelessWidget {
   final MobileScannerController scannerController = MobileScannerController(
     autoStart: true,
   );
+
+  HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

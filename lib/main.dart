@@ -30,7 +30,7 @@ Future<void> _initUserId() async {
     await storage.write(key: Settings.gameUpcUserIdKey, value: uuid);
     debugPrint('Generated new game_upc_user_id: $uuid');
   } else {
-    debugPrint('Existing game_upc_user_id: ${gameUpcUserId}');
+    debugPrint('Existing game_upc_user_id: $gameUpcUserId');
   }
 }
 

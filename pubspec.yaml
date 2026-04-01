@@ -43,7 +43,6 @@ dependencies:
   flutter_secure_storage: ^10.0.0
   shared_preferences: ^2.5.4
   uuid: ^4.5.2
-  bgg_api: ^0.8.0
   flutter_dotenv: ^6.0.0
 
   webview_flutter_wkwebview: any

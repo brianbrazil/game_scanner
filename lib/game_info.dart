@@ -25,6 +25,17 @@ class GameInfo {
     return 'https://api.gameupc.com/v1/upc/$barcode/bgg_id/$bgg_id';
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'barcode': barcode,
+      'bgg_id': bgg_id,
+      'name': name,
+      'published': published,
+      'verified': verified,
+      'confidence': confidence,
+    };
+  }
+
   static List<GameInfo> fromGameUpc(dynamic json) {
     json = json is String ? jsonDecode(json) : json;
     final barcode = json['upc'];
@@ -43,14 +54,16 @@ class GameInfo {
     }).toList();
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'barcode': barcode,
-      'bgg_id': bgg_id,
-      'name': name,
-      'published': published,
-      'verified': verified,
-      'confidence': confidence,
-    };
+  static List<GameInfo> fromBggSearch(results, String barcode) {
+    return results['items'].map<GameInfo>((item) {
+      return GameInfo(
+          barcode: barcode,
+          bgg_id: int.parse(item['objectid'].toString()),
+          name: item['ordtitle'],
+          published: int.parse((item['yearpublished'] ?? 0).toString()),
+          verified: false,
+          confidence: 0
+      );
+    }).toList();
   }
 }

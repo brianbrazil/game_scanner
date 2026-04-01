@@ -67,6 +67,7 @@ class HomePage extends StatelessWidget {
                                     context: context,
                                     builder: (context) => TitleSelectionDialog(
                                       games: model.games,
+                                      barcode: rawValue!,
                                     ),
                                   ).then((_) {
                                     scannerController.start();

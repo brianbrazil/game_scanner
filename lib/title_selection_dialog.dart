@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'bgg_page.dart';
+import 'bgg_search.dart';
 import 'game_info.dart';
 
 class TitleSelectionDialog extends StatelessWidget {
-  const TitleSelectionDialog({super.key, required this.games});
+  const TitleSelectionDialog({
+    super.key,
+    required this.games,
+    required this.barcode,
+  });
 
   final List<GameInfo> games;
+  final String barcode;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +25,8 @@ class TitleSelectionDialog extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  searchInput(context),
+                  SizedBox(height: 8),
                   ...titleButtons(context, model.games),
                   cancelButton(context),
                 ],
@@ -30,11 +38,26 @@ class TitleSelectionDialog extends StatelessWidget {
     );
   }
 
+  TextField searchInput(BuildContext context) {
+    return TextField(
+      decoration: InputDecoration(hintText: 'Search'),
+      onChanged: (text) async {
+        final results = await BggSearch.search(text);
+        final gameInfo = GameInfo.fromBggSearch(results, barcode);
+        context.read<DialogGamesModel>().setGames(gameInfo);
+      },
+    );
+
+  }
+
   Iterable<Widget> titleButtons(BuildContext context, List<GameInfo> games) {
-    return games.asMap().entries.map((entry) {
+    return games.asMap().entries.expand((entry) {
       final index = entry.key;
       final game = entry.value;
-      return titleButton(context, game, index == 0);
+      return [
+        titleButton(context, game, index == 0),
+        if (index < games.length - 1) SizedBox(height: 8),
+      ];
     });
   }
 

@@ -103,24 +103,27 @@ class Settings extends StatelessWidget {
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    SvgPicture.asset(
-                      'assets/powered-by-bgg-rgb.svg',
-                      height: 48,
-                    ),
-                    if (version.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Text(
-                          'v$version',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: Colors.black, fontSize: 18),
-                        ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/powered-by-bgg-rgb.svg',
+                        height: 48,
                       ),
-                  ],
+                      if (version.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            'v$version',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: Colors.black, fontSize: 18),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -31,7 +32,7 @@ class Settings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, String?>> (
+    return FutureBuilder<Map<String, String?>>(
       future: _loadValues(),
       builder: (context, snapshot) {
         final loading = snapshot.connectionState == ConnectionState.waiting;
@@ -44,57 +45,67 @@ class Settings extends StatelessWidget {
         }
 
         return Scaffold(
-          appBar: AppBar(
-            title: Text('Settings'),
-          ),
+          appBar: AppBar(title: Text('Settings')),
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.all(10),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(height: 16),
-                TextFormField(
-                  initialValue: bggUsername,
-                  decoration: const InputDecoration(
-                    labelText: 'BGG Username',
-                    border: OutlineInputBorder(),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        initialValue: bggUsername,
+                        decoration: const InputDecoration(
+                          labelText: 'BGG Username',
+                          border: OutlineInputBorder(),
+                        ),
+                        textInputAction: TextInputAction.next,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        onChanged: (value) {
+                          // Fire and forget is fine here; UI stays responsive.
+                          _saveUsername(value);
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        initialValue: bggPassword,
+                        decoration: const InputDecoration(
+                          labelText: 'BGG Password',
+                          border: OutlineInputBorder(),
+                        ),
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        onChanged: (value) {
+                          _savePassword(value);
+                        },
+                      ),
+                      const SizedBox(height: 50),
+                      TextFormField(
+                        readOnly: true,
+                        initialValue: gameUpcUuid,
+                        decoration: const InputDecoration(
+                          labelText: 'GameUPC User ID',
+                          border: OutlineInputBorder(),
+                        ),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
-                  textInputAction: TextInputAction.next,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  onChanged: (value) {
-                    // Fire and forget is fine here; UI stays responsive.
-                    _saveUsername(value);
-                  },
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  initialValue: bggPassword,
-                  decoration: const InputDecoration(
-                    labelText: 'BGG Password',
-                    border: OutlineInputBorder(),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: SvgPicture.asset(
+                    'assets/powered-by-bgg-rgb.svg',
+                    height: 48,
                   ),
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  onChanged: (value) {
-                    _savePassword(value);
-                  },
                 ),
-                SizedBox(height: 50),
-                TextFormField(
-                  readOnly: true,
-                  initialValue: gameUpcUuid,
-                  decoration: const InputDecoration(
-                    labelText: 'GameUPC User ID',
-                    border: OutlineInputBorder(),
-                  ),
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                )
               ],
             ),
           ),

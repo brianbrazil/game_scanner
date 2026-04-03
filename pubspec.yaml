@@ -44,6 +44,7 @@ dependencies:
   shared_preferences: ^2.5.4
   uuid: ^4.5.2
   flutter_dotenv: ^6.0.0
+  flutter_svg: ^2.2.1
 
   webview_flutter_wkwebview: any
 dev_dependencies:
@@ -71,6 +72,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/logo.png
+    - assets/powered-by-bgg-rgb.svg
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

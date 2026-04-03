@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -12,6 +13,7 @@ class Settings extends StatelessWidget {
   static const storage = FlutterSecureStorage();
 
   Future<Map<String, String?>> _loadValues() async {
+    final packageInfo = await PackageInfo.fromPlatform();
     final username = await storage.read(key: bggUsernameKey);
     final password = await storage.read(key: bggPasswordKey);
     final gameUpcUserId = await storage.read(key: gameUpcUserIdKey);
@@ -19,6 +21,7 @@ class Settings extends StatelessWidget {
       'username': username,
       'password': password,
       'gameUpcUserId': gameUpcUserId,
+      'version': packageInfo.version,
     };
   }
 
@@ -39,6 +42,7 @@ class Settings extends StatelessWidget {
         final bggUsername = snapshot.data?['username'] ?? '';
         final bggPassword = snapshot.data?['password'] ?? '';
         final gameUpcUuid = snapshot.data?['gameUpcUserId'] ?? '';
+        final version = snapshot.data?['version'] ?? '';
 
         if (loading) {
           return const Center(child: CircularProgressIndicator());
@@ -99,12 +103,24 @@ class Settings extends StatelessWidget {
                     ],
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: SvgPicture.asset(
-                    'assets/powered-by-bgg-rgb.svg',
-                    height: 48,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/powered-by-bgg-rgb.svg',
+                      height: 48,
+                    ),
+                    if (version.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Text(
+                          'v$version',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.black, fontSize: 18),
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
